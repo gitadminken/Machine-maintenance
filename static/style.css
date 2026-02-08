@@ -183,8 +183,34 @@ header p {
     color: #e5e7eb;
     border: 1px solid rgba(148, 163, 184, 0.25);
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-family: inherit;
     transition: all 0.2s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    height: 44px;
+    line-height: normal;
+}
+
+/* Custom dropdown arrow for select (replaces native Safari arrow) */
+.form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+/* Hide number input spinners across all browsers */
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form-group input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .form-group input:focus,
@@ -523,7 +549,7 @@ footer {
     }
 }
 
-/* Technical Diagnostics Section */
+/* Technical Diagnostics Section — matches .card design */
 .technical-card {
     margin-top: 1rem;
     padding: 1rem;
@@ -531,6 +557,7 @@ footer {
     border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(2, 8, 23, 0.55);
+    font-family: inherit;
 }
 
 .technical-header {
@@ -547,6 +574,7 @@ footer {
     font-weight: 700;
     color: #93c5fd;
     margin: 0;
+    letter-spacing: -0.01em;
 }
 
 .tech-tag {
@@ -562,7 +590,14 @@ footer {
 .technical-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem;
+    gap: 1.5rem;
+}
+
+.tech-group {
+    background: #0b1324;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    padding: 1rem;
 }
 
 .tech-group-title {
@@ -570,29 +605,40 @@ footer {
     color: #cbd5e1;
     margin-bottom: 1rem;
     font-weight: 600;
+    letter-spacing: -0.01em;
 }
 
 .technical-metrics {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.85rem;
 }
 
 .tech-metric {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.tech-metric:last-child {
+    border-bottom: none;
 }
 
 .tech-label {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     color: #94a3b8;
+    font-weight: 400;
 }
 
 .tech-value {
     font-size: 0.95rem;
     color: #e2e8f0;
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-feature-settings: "tnum";
+    font-feature-settings: "tnum";
 }
 
 /* Color Highlighters */
@@ -615,7 +661,7 @@ footer {
 @media (max-width: 1024px) {
     .technical-grid {
         grid-template-columns: 1fr 1fr;
-        gap: 2rem;
+        gap: 1rem;
     }
 }
 
