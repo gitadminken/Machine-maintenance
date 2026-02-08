@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Failure Prediction System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="gears-container">
+                <div class="gear gear-1"></div>
+                <div class="gear gear-2"></div>
+                <div class="gear gear-3"></div>
+            </div>
+            <h1>Machine Failure Prediction System</h1>
+            <p>Predicts which equipment is likely to fail so technicians can act early and prevent production downtime. The model effectively identifies high-risk assets—helping prioritize maintenance and reduce repair costs.</p>
+        </header>
+
+        <div class="card">
+            <form id="prediction-form">
+                <input type="hidden" id="selected_row_index" name="selected_row_index"
+                    value="{{ selected_row_index if selected_row_index is defined else '' }}">
+                <h2 class="card-title">Prediction Input</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="type">Product Type</label>
+                        <select id="type" name="type" required>
+                            <option value="L">L - Low</option>
+                            <option value="M">M - Medium</option>
+                            <option value="H">H - High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="air_temp">Air Temperature (K)</label>
+                        <input type="number" id="air_temp" name="air_temp" step="0.1" placeholder="e.g., 298.1"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="process_temp">Process Temperature (K)</label>
+                        <input type="number" id="process_temp" name="process_temp" step="0.1" placeholder="e.g., 308.6"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rpm">Rotational Speed (rpm)</label>
+                        <input type="number" id="rpm" name="rpm" placeholder="e.g., 1500" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="torque">Torque (Nm)</label>
+                        <input type="number" id="torque" name="torque" step="0.1" placeholder="e.g., 40.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tool_wear">Tool Wear (min)</label>
+                        <input type="number" id="tool_wear" name="tool_wear" placeholder="e.g., 100" required>
+                    </div>
+                </div>
+
+                <!-- Add spacing between form and test data -->
+                <div style="height: 1.2rem;"></div>
+                <h2 class="card-title">Test Data</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Type</th>
+                                <th>Air Temp (K)</th>
+                                <th>Process Temp (K)</th>
+                                <th>RPM</th>
+                                <th>Torque (Nm)</th>
+                                <th>Tool Wear (min)</th>
+                                <th>
+                                    Machine Failure
+                                    <button type="button" class="filter-btn" aria-label="Filter Machine Failure"
+                                        onclick="toggleFilterMenu(event)">
+                                        <!-- modern funnel/filter icon (SVG) -->
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 1.6 3.2L15 13v5a1 1 0 0 1-1.447.894l-2-1A1 1 0 0 1 11 17v-4L3.4 6.2A2 2 0 0 1 3 5z"
+                                                fill="currentColor" />
+                                        </svg>
+                                    </button>
+                                    <div id="failure-filter-menu" class="filter-menu" data-active="false">
+                                        <button type="button" class="filter-option" data-value="all"
+                                            onclick="applyFilter(this)">All</button>
+                                        <button type="button" class="filter-option" data-value="normal"
+                                            onclick="applyFilter(this)">Normal</button>
+                                        <button type="button" class="filter-option" data-value="failure"
+                                            onclick="applyFilter(this)">Failure</button>
+                                    </div>
+                                </th>
+                                <th>Test</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in test_data %}
+                            <tr class="table-row {% if selected_row_index is defined and selected_row_index == loop.index %}processing{% endif %}"
+                                data-type="{{ row['Type'] }}" data-air="{{ row['Air temperature [K]'] }}"
+                                data-process="{{ row['Process temperature [K]'] }}"
+                                data-rpm="{{ row['Rotational speed [rpm]'] }}" data-torque="{{ row['Torque [Nm]'] }}"
+                                data-wear="{{ row['Tool wear [min]'] }}">
+                                <td>{{ loop.index }}</td>
+                                <td>{{ row['Type'] }}</td>
+                                <td>{{ "%.1f"|format(row['Air temperature [K]']) }}</td>
+                                <td>{{ "%.1f"|format(row['Process temperature [K]']) }}</td>
+                                <td>{{ row['Rotational speed [rpm]'] }}</td>
+                                <td>{{ "%.1f"|format(row['Torque [Nm]']) }}</td>
+                                <td>{{ row['Tool wear [min]'] }}</td>
+                                <td class="{{ 'failure-text' if row['Machine failure'] == 1 else 'normal-text' }}">{{
+                                    "Failure" if row['Machine failure'] == 1 else "Normal" }}</td>
+                                <td>
+                                    <input type="checkbox" class="table-checkbox" onclick="useRowForPrediction(this)"
+                                        title="Check to auto-fill prediction fields" {% if selected_row_index is defined
+                                        and selected_row_index==loop.index %}checked{% endif %} />
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: right; margin-top: 0.5rem;">
+                    <span
+                        style="font-size: 0.75rem; color: #94a3b8; font-weight: 400; background: rgba(14, 165, 233, 0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(14, 165, 233, 0.2);">
+                        Check a row to auto-fill input fields above
+                    </span>
+                </div>
+
+                <div class="btn-group" style="justify-content: center; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 180px;">Predict</button>
+                </div>
+
+                <!-- Prediction Result Display -->
+                <div id="prediction-result-container"
+                    style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; border: 1px solid #334155;">
+                    <!-- Content will be injected by JS -->
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Model Diagnostics (Technical Portfolio Section) -->
+        <div class="technical-card">
+            <div class="technical-header">
+                <h3 class="technical-title">Model Diagnostics</h3>
+            </div>
+
+            <div class="technical-grid">
+                <!-- Group 1: Core Performance -->
+                <div class="tech-group">
+                    <h4 class="tech-group-title">Core Metrics</h4>
+                    <div class="technical-metrics">
+                        <div class="tech-metric">
+                            <span class="tech-label">ROC-AUC Score</span>
+                            <span class="tech-value highlight-cyan">0.9615</span>
+                        </div>
+                        <div class="tech-metric">
+                            <span class="tech-label">Model Recall</span>
+                            <span class="tech-value highlight-cyan">76.47%</span>
+                        </div>
+                        <div class="tech-metric">
+                            <span class="tech-label">Precision</span>
+                            <span class="tech-value">70.27%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Reliability Stats -->
+                <div class="tech-group">
+                    <h4 class="tech-group-title">Reliability Breakdown</h4>
+                    <div class="technical-metrics">
+                        <div class="tech-metric">
+                            <span class="tech-label">Test Set Size</span>
+                            <span class="tech-value">2,000</span>
+                        </div>
+                        <div class="tech-metric">
+                            <span class="tech-label">Correct Non-Fail (TN)</span>
+                            <span class="tech-value highlight-green">1,910</span>
+                        </div>
+                        <div class="tech-metric">
+                            <span class="tech-label">Actual Failures</span>
+                            <span class="tech-value">68</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Model Accuracy -->
+                <div class="tech-group">
+                    <h4 class="tech-group-title">Detection Diagnostics</h4>
+                    <div class="technical-metrics">
+                        <div class="tech-metric">
+                            <span class="tech-label">Correct Hits (TP)</span>
+                            <span class="tech-value highlight-cyan">52</span>
+                        </div>
+                        <div class="tech-metric">
+                            <span class="tech-label">Missed (FN)</span>
+                            <span class="tech-value highlight-red">16</span>
+                        </div>
+                        <div class="tech-metric">
+                            <span class="tech-label">False Alarms (FP)</span>
+                            <span class="tech-value highlight-amber">22</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Machine Failure Prediction System | Built with FastAPI and XGBoost</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.textContent = 'Predicting...';
+            submitBtn.disabled = true;
+
+            const formData = {
+                type: document.getElementById('type').value,
+                air_temp: parseFloat(document.getElementById('air_temp').value),
+                process_temp: parseFloat(document.getElementById('process_temp').value),
+                rpm: parseInt(document.getElementById('rpm').value),
+                torque: parseFloat(document.getElementById('torque').value),
+                tool_wear: parseInt(document.getElementById('tool_wear').value)
+            };
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Prediction failed');
+                }
+
+                const result = await response.json();
+                renderResult(result);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred during prediction. Please try again.');
+            } finally {
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        function renderResult(data) {
+            const container = document.getElementById('prediction-result-container');
+
+            // If container is already visible, fade it out first
+            if (container.style.display === 'block') {
+                container.style.animation = 'fadeOut 0.2s ease-out';
+                setTimeout(() => {
+                    updateContainerContent(container, data);
+                }, 200);
+            } else {
+                updateContainerContent(container, data);
+            }
+        }
+
+        function updateContainerContent(container, data) {
+            const predictionText = data.prediction === 0 ? 'NO FAILURE' : 'FAILURE RISK';
+            const predictionColor = data.prediction === 0 ? '#22c55e' : '#ef4444';
+
+            const probColor = data.failure_probability < 0.3 ? '#22c55e' :
+                (data.failure_probability < 0.6 ? '#f59e0b' : '#ef4444');
+
+            const html = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; text-align: center;">
+                    <!-- Prediction Status -->
+                    <div class="prediction-metric" style="animation: slideInUp 0.3s ease-out 0.05s both;">
+                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase;">Prediction</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: ${predictionColor};">
+                            ${predictionText}
+                        </div>
+                    </div>
+                    
+                    <!-- Failure Probability -->
+                    <div class="prediction-metric" style="animation: slideInUp 0.3s ease-out 0.1s both;">
+                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase;">Failure Probability</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: ${probColor};">
+                            ${(data.failure_probability * 100).toFixed(1)}%
+                        </div>
+                        <!-- Progress bar -->
+                        <div style="background: #334155; border-radius: 4px; height: 6px; margin-top: 0.5rem; overflow: hidden;">
+                            <div class="progress-bar-fill" style="background: ${probColor}; height: 100%; width: 0%; transition: width 0.5s ease 0.3s;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Confidence -->
+                    <div class="prediction-metric" style="animation: slideInUp 0.3s ease-out 0.15s both;">
+                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase;">Confidence</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #60a5fa;">
+                            ${(data.confidence * 100).toFixed(1)}%
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Recommendation -->
+                <div style="margin-top: 1.25rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 4px solid ${data.action_color}; animation: slideInUp 0.3s ease-out 0.2s both;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="background: ${data.action_color}; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                            ${data.action}
+                        </span>
+                        <span style="color: #e2e8f0; font-size: 0.95rem;">${data.action_text}</span>
+                    </div>
+                </div>
+                
+                <!-- Cost-Benefit Note -->
+                <div style="margin-top: 1rem; font-size: 0.8rem; color: #64748b; text-align: center; animation: slideInUp 0.3s ease-out 0.25s both;">
+                    <em>This model balances catch rate with credibility — when it flags a failure, it's worth investigating.</em>
+                </div>
+            `;
+
+            container.innerHTML = html;
+            container.style.display = 'block';
+            container.style.animation = 'fadeInScale 0.3s ease-out';
+
+            // Animate the progress bar fill
+            setTimeout(() => {
+                const progressBar = container.querySelector('.progress-bar-fill');
+                if (progressBar) {
+                    progressBar.style.width = `${data.failure_probability * 100}%`;
+                }
+            }, 100);
+
+            // Scroll to show the prediction result canvas prominently
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
+        }
+
+        function useRowForPrediction(checkbox) {
+            const rows = document.querySelectorAll('.table-row');
+            const checkboxes = document.querySelectorAll('.table-checkbox');
+            checkboxes.forEach((cb) => { if (cb !== checkbox) cb.checked = false; });
+            rows.forEach(tr => tr.classList.remove('processing'));
+            const row = checkbox.closest('tr');
+            if (checkbox.checked && row) {
+                row.classList.add('processing');
+                const indexCell = row.querySelector('td:first-child');
+                if (indexCell) {
+                    document.getElementById('selected_row_index').value = indexCell.textContent.trim();
+                }
+                const type = row.dataset.type || 'H';
+                document.getElementById('type').value = type;
+                document.getElementById('air_temp').value = row.dataset.air;
+                document.getElementById('process_temp').value = row.dataset.process;
+                document.getElementById('rpm').value = row.dataset.rpm;
+                document.getElementById('torque').value = row.dataset.torque;
+                document.getElementById('tool_wear').value = row.dataset.wear;
+            } else if (row) {
+                const indexCell = row.querySelector('td:first-child');
+                if (indexCell) {
+                    document.getElementById('selected_row_index').value = indexCell.textContent.trim();
+                }
+            }
+        }
+
+        function filterTable() {
+            const filterMenu = document.getElementById('failure-filter-menu');
+            const filter = filterMenu.dataset.selected || 'all';
+            const rows = document.querySelectorAll('.table-row');
+            rows.forEach(row => {
+                const failureCell = row.cells[7];
+                const text = failureCell.textContent.trim().toLowerCase();
+                if (filter === 'all' || text === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleFilterMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('failure-filter-menu');
+            const active = menu.getAttribute('data-active') === 'true';
+            menu.setAttribute('data-active', (!active).toString());
+            if (!active) {
+                document.addEventListener('click', closeFilterMenuOnce);
+            }
+        }
+
+        function closeFilterMenuOnce() {
+            const menu = document.getElementById('failure-filter-menu');
+            menu.setAttribute('data-active', 'false');
+            document.removeEventListener('click', closeFilterMenuOnce);
+        }
+
+        function applyFilter(btn) {
+            const value = btn.dataset.value;
+            const menu = document.getElementById('failure-filter-menu');
+            menu.dataset.selected = value;
+            // visually mark selected
+            document.querySelectorAll('#failure-filter-menu .filter-option').forEach(b => {
+                b.classList.toggle('active', b.dataset.value === value);
+            });
+            filterTable();
+            menu.setAttribute('data-active', 'false');
+            // persist selected filter
+            sessionStorage.setItem('failure_filter_selected', btn.dataset.value);
+        }
+
+        // Persist selection and scroll position across predict
+        document.addEventListener('DOMContentLoaded', () => {
+            const tableContainer = document.querySelector('.table-container');
+
+            // Restore scroll position
+            const savedScroll = sessionStorage.getItem('table_scroll_top');
+            if (tableContainer && savedScroll !== null) {
+                tableContainer.scrollTop = parseInt(savedScroll, 10);
+            }
+
+            // Restore filter selection
+            const savedFilter = sessionStorage.getItem('failure_filter_selected');
+            if (savedFilter) {
+                const menu = document.getElementById('failure-filter-menu');
+                if (menu) {
+                    menu.dataset.selected = savedFilter;
+                    document.querySelectorAll('#failure-filter-menu .filter-option').forEach(b => {
+                        b.classList.toggle('active', b.dataset.value === savedFilter);
+                    });
+                    filterTable();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
