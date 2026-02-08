@@ -19,8 +19,8 @@
                 <div class="gear gear-2"></div>
                 <div class="gear gear-3"></div>
             </div>
-            <h1>Machine Failure Prediction System</h1>
-            <p>Predicts which equipment is likely to fail so technicians can act early and prevent production downtime. The model effectively identifies high-risk assets—helping prioritize maintenance and reduce repair costs.</p>
+            <h1 style="font-size: 2.75rem; line-height: 1.15;">Machine Failure Prediction System</h1>
+            <p>Predict equipment failures before they happen. Enter sensor readings and get instant failure probability, confidence scores, and actionable maintenance recommendations.</p>
         </header>
 
         <div class="card">
@@ -28,6 +28,11 @@
                 <input type="hidden" id="selected_row_index" name="selected_row_index"
                     value="{{ selected_row_index if selected_row_index is defined else '' }}">
                 <h2 class="card-title">Prediction Input</h2>
+                
+                <!-- Error Message Container -->
+                <div id="error-message" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.875rem;">
+                </div>
+
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="type">Product Type</label>
@@ -39,25 +44,25 @@
                     </div>
                     <div class="form-group">
                         <label for="air_temp">Air Temperature (K)</label>
-                        <input type="number" id="air_temp" name="air_temp" step="0.1" placeholder="e.g., 298.1"
+                        <input type="number" id="air_temp" name="air_temp" step="0.1" min="200" max="400" placeholder="e.g., 298.1"
                             required>
                     </div>
                     <div class="form-group">
                         <label for="process_temp">Process Temperature (K)</label>
-                        <input type="number" id="process_temp" name="process_temp" step="0.1" placeholder="e.g., 308.6"
+                        <input type="number" id="process_temp" name="process_temp" step="0.1" min="200" max="400" placeholder="e.g., 308.6"
                             required>
                     </div>
                     <div class="form-group">
                         <label for="rpm">Rotational Speed (rpm)</label>
-                        <input type="number" id="rpm" name="rpm" placeholder="e.g., 1500" required>
+                        <input type="number" id="rpm" name="rpm" min="0" max="5000" placeholder="e.g., 1500" required>
                     </div>
                     <div class="form-group">
                         <label for="torque">Torque (Nm)</label>
-                        <input type="number" id="torque" name="torque" step="0.1" placeholder="e.g., 40.0" required>
+                        <input type="number" id="torque" name="torque" step="0.1" min="0" max="100" placeholder="e.g., 40.0" required>
                     </div>
                     <div class="form-group">
                         <label for="tool_wear">Tool Wear (min)</label>
-                        <input type="number" id="tool_wear" name="tool_wear" placeholder="e.g., 100" required>
+                        <input type="number" id="tool_wear" name="tool_wear" min="0" max="1000" placeholder="e.g., 100" required>
                     </div>
                 </div>
 
@@ -220,6 +225,10 @@
         document.getElementById('prediction-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            const errorContainer = document.getElementById('error-message');
+            const resultContainer = document.getElementById('prediction-result-container');
+            errorContainer.style.display = 'none';
+            
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn.textContent;
             submitBtn.textContent = 'Predicting...';
@@ -234,6 +243,14 @@
                 tool_wear: parseInt(document.getElementById('tool_wear').value)
             };
 
+            // Basic Client-side Validation
+            if (isNaN(formData.air_temp) || isNaN(formData.process_temp) || isNaN(formData.rpm) || isNaN(formData.torque) || isNaN(formData.tool_wear)) {
+                showError('Please enter valid numerical values for all sensor readings.');
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+                return;
+            }
+
             try {
                 const response = await fetch('/api/predict', {
                     method: 'POST',
@@ -244,19 +261,28 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Prediction failed');
+                    const errorDetail = await response.json();
+                    throw new Error(errorDetail.detail || 'Prediction failed');
                 }
 
                 const result = await response.json();
                 renderResult(result);
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred during prediction. Please try again.');
+                showError(error.message || 'An error occurred during prediction. Please check your inputs and try again.');
+                resultContainer.style.display = 'none';
             } finally {
                 submitBtn.textContent = originalBtnText;
                 submitBtn.disabled = false;
             }
         });
+
+        function showError(message) {
+            const errorContainer = document.getElementById('error-message');
+            errorContainer.textContent = message;
+            errorContainer.style.display = 'block';
+            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
 
         function renderResult(data) {
             const container = document.getElementById('prediction-result-container');
@@ -283,7 +309,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; text-align: center;">
                     <!-- Prediction Status -->
                     <div class="prediction-metric" style="animation: slideInUp 0.3s ease-out 0.05s both;">
-                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase;">Prediction</div>
+                        <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.03em;">Prediction</div>
                         <div style="font-size: 1.1rem; font-weight: 700; color: ${predictionColor};">
                             ${predictionText}
                         </div>
@@ -291,8 +317,8 @@
                     
                     <!-- Failure Probability -->
                     <div class="prediction-metric" style="animation: slideInUp 0.3s ease-out 0.1s both;">
-                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase;">Failure Probability</div>
-                        <div style="font-size: 1.5rem; font-weight: 700; color: ${probColor};">
+                        <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.03em;">Failure Probability</div>
+                        <div style="font-size: 1.35rem; font-weight: 700; color: ${probColor};">
                             ${(data.failure_probability * 100).toFixed(1)}%
                         </div>
                         <!-- Progress bar -->
@@ -303,8 +329,8 @@
                     
                     <!-- Confidence -->
                     <div class="prediction-metric" style="animation: slideInUp 0.3s ease-out 0.15s both;">
-                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase;">Confidence</div>
-                        <div style="font-size: 1.5rem; font-weight: 700; color: #60a5fa;">
+                        <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.03em;">Confidence</div>
+                        <div style="font-size: 1.35rem; font-weight: 700; color: #60a5fa;">
                             ${(data.confidence * 100).toFixed(1)}%
                         </div>
                     </div>
@@ -313,10 +339,10 @@
                 <!-- Action Recommendation -->
                 <div style="margin-top: 1.25rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 4px solid ${data.action_color}; animation: slideInUp 0.3s ease-out 0.2s both;">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="background: ${data.action_color}; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                        <span style="background: ${data.action_color}; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em;">
                             ${data.action}
                         </span>
-                        <span style="color: #e2e8f0; font-size: 0.95rem;">${data.action_text}</span>
+                        <span style="color: #e2e8f0; font-size: 0.875rem;">${data.action_text}</span>
                     </div>
                 </div>
                 

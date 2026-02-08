@@ -23,16 +23,18 @@ body {
 header {
     text-align: center;
     margin-bottom: 1rem;
-    padding: 1rem;
-    /* reduce header padding */
+    padding: 1.75rem 1rem;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0ea5e9 100%);
     color: #f8fafc;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(14, 165, 233, 0.18);
     position: relative;
-    /* enable pseudo element layering */
     overflow: hidden;
-    /* clip decorative element */
 }
 
 /* Remove old static gears */
@@ -110,7 +112,7 @@ header>* {
 }
 
 header h1 {
-    font-size: 2.25rem;
+    font-size: 2rem;
     font-weight: 800;
     margin-bottom: 0.75rem;
     background: linear-gradient(to right, #60a5fa, #38bdf8);
@@ -183,7 +185,7 @@ header p {
     color: #e5e7eb;
     border: 1px solid rgba(148, 163, 184, 0.25);
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-family: inherit;
     transition: all 0.2s;
     -webkit-appearance: none;
@@ -233,7 +235,7 @@ header p {
     padding: 0.75rem 1.75rem;
     border: none;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
@@ -293,8 +295,7 @@ header p {
 }
 
 .result-box .result-value {
-    font-size: 1.2rem;
-    /* smaller result text */
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
@@ -330,7 +331,7 @@ header p {
 }
 
 .metric-item .metric-value {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 600;
     color: #60a5fa;
     /* blue-400 */
@@ -355,7 +356,7 @@ header p {
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #e5e7eb;
 }
 
@@ -440,7 +441,7 @@ footer {
     text-align: center;
     padding: 1.5rem;
     color: #64748b;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
 #failure-filter {
@@ -627,13 +628,13 @@ footer {
 }
 
 .tech-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #94a3b8;
     font-weight: 400;
 }
 
 .tech-value {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #e2e8f0;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
