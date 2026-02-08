@@ -2,17 +2,40 @@
 
 FastAPI web app that predicts machine failures from sensor data. Uses an XGBoost model trained on the [AI4I 2020 Predictive Maintenance Dataset](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset) (10,000 records).
 
+## Domain Context
+
+I am a Senior Technician at Samsung, where I work directly with production equipment and deal with unplanned downtime that impacts yield and operational cost. In semiconductor and electronics manufacturing, maintenance decisions depend on sensor telemetry — temperature differentials, spindle speeds, torque loads, and tooling wear — the same parameters this model consumes.
+
+The action-level system (Normal → Monitor → Warning → Critical) mirrors the triage process I follow on the production floor: not every anomaly warrants a line stop, but missed failures are costly. The model's threshold and metric choices were shaped by that firsthand operational experience.
+
 ## What it does
 
 You enter sensor readings (temperature, RPM, torque, tool wear) and the model tells you if the machine is likely to fail. The dashboard also shows the failure probability and suggests an action level (normal / monitor / warning / critical).
 
 There's a JSON API at `POST /api/predict` too.
 
+> Tip: In the dashboard table, you can check a row's checkbox to auto-fill the prediction input fields above with that row's sensor values (Type, temperatures, RPM, torque, tool wear). This speeds up testing different scenarios.
+
+#### Prediction Input
+<!-- Screenshot: the sensor input form -->
+![Prediction Input Form](static/screenshots/ui_prediction_input.png)
+
+#### Prediction Result
+<!-- Screenshot: the result panel showing prediction, probability, confidence, and action -->
+![Prediction Result Panel](static/screenshots/ui_prediction_result.png)
+
+#### Model Diagnostics
+<!-- Screenshot: the diagnostics card with core metrics, reliability breakdown, and detection diagnostics -->
+![Model Diagnostics](static/screenshots/ui_model_diagnostics.png)
+
 ## Model details
 
 The dataset is heavily imbalanced (~3.4% failure rate). I compared 7 classifiers — Logistic Regression, KNN, Decision Tree, Random Forest, AdaBoost, Gradient Boosting, and XGBoost. Picked XGBoost because it had the best balance between recall and precision.
 
-Why that balance matters: in an industrial setting, a model with high recall but terrible precision generates too many false alarms. Technicians start ignoring the alerts because they've been burned too many times — and then a real failure gets missed. The model needs to catch failures (recall) but also be credible when it does flag something (precision), so the maintenance team actually trusts it and responds.
+<!-- Screenshot: confusion matrices for all 7 algorithms side-by-side -->
+![Confusion Matrices for 7 Algorithms](static/screenshots/algorithms_confusion_matrices.png)
+
+Why that balance matters: from direct experience on the production floor, a model with high recall but poor precision generates excessive false alarms. Maintenance teams learn to distrust the system and begin ignoring alerts — which is when real failures get missed. For a predictive maintenance tool to be adopted in practice, it needs to catch failures (recall) while remaining credible when it flags something (precision), so technicians actually act on its recommendations.
 
 Key decisions:
 - Used `scale_pos_weight` to handle class imbalance instead of oversampling
@@ -57,3 +80,4 @@ docker-compose up --build
 ```
 
 Open http://localhost:8001
+
