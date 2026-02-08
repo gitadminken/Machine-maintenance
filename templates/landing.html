@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Failure Prediction System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/landing.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="landing-page">
+
+        <!-- ─── Hero Section ─── -->
+        <section class="hero">
+            <div class="hero-bg-glow"></div>
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <span class="hero-badge"> FastAPI · XGBoost</span>
+                    <h1 class="hero-title">Machine Failure<br><span class="hero-accent">Prediction System</span></h1>
+                    <p class="hero-subtitle">
+                        Predicts which equipment is likely to fail so technicians can act early and prevent production downtime. The model effectively identifies high-risk assets—helping prioritize maintenance and reduce repair costs.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="/app" class="btn btn-primary btn-lg">Launch Application</a>
+                        <a href="https://github.com/gitadminken/Machine-maintenance" target="_blank" rel="noopener"
+                            class="btn btn-outline btn-lg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                            </svg>
+                            View on GitHub
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">96.15%</span>
+                            <span class="hero-stat-label">ROC-AUC Score</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">76.5%</span>
+                            <span class="hero-stat-label">Recall Rate</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">10,000</span>
+                            <span class="hero-stat-label">Training Records</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">&lt;50ms</span>
+                            <span class="hero-stat-label">Prediction Speed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Business Impact Section ─── -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Why It Matters</span>
+                    <h2 class="section-title">Business Impact</h2>
+                    <p class="section-subtitle">Unplanned downtime represents one of the most significant operational challenges in modern industry. Predictive maintenance shifts the paradigm from reactive repairs to proactive interventions, optimizing equipment lifespan and operational efficiency.
+                    </p>
+                </div>
+                <div class="impact-grid">
+                    <div class="impact-card">
+                        <div class="impact-icon impact-icon-red">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                        </div>
+                        <h3 class="impact-title">Reduce Unplanned Downtime</h3>
+                        <p class="impact-desc">Catch failures before they happen. The model identifies 76.5% of
+                            impending failures, giving maintenance teams time to schedule repairs during planned
+                            downtime windows instead of emergency stops.</p>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-icon impact-icon-green">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23" />
+                                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                            </svg>
+                        </div>
+                        <h3 class="impact-title">Cut Maintenance Costs</h3>
+                        <p class="impact-desc">Preventive maintenance costs up to 12× less than emergency repairs.
+                            By targeting only high-risk machines, you avoid wasteful blanket inspections and allocate
+                            technician time where it matters most.</p>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-icon impact-icon-cyan">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
+                            </svg>
+                        </div>
+                        <h3 class="impact-title">Trustworthy Alerts</h3>
+                        <p class="impact-desc">With 70.3% precision, when the model flags a failure, it's worth
+                            investigating. Too many false alarms erode trust—this model balances catch rate with
+                            credibility so teams actually respond to alerts.</p>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-icon impact-icon-amber">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                                <line x1="8" y1="21" x2="16" y2="21" />
+                                <line x1="12" y1="17" x2="12" y2="21" />
+                            </svg>
+                        </div>
+                        <h3 class="impact-title">Real-Time Decision Support</h3>
+                        <p class="impact-desc">Get instant failure probability and action-level recommendations
+                            (Normal → Monitor → Warning → Critical). Integrate predictions into existing workflows via
+                            the built-in REST API.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── How to Use Section ─── -->
+        <section class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Getting Started</span>
+                    <h2 class="section-title">How to Use the App</h2>
+                    <p class="section-subtitle">Two simple ways to get predictions—manual input for custom scenarios, or
+                        one-click testing from real data.</p>
+                </div>
+
+                <div class="howto-grid">
+                    <!-- Method 1: Manual Input -->
+                    <div class="howto-card">
+                        <div class="howto-number">1</div>
+                        <h3 class="howto-title">Manual Input</h3>
+                        <p class="howto-desc">Enter sensor readings directly into the form fields:</p>
+                        <div class="howto-steps">
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Select Product Type</strong> — Choose L (Low), M (Medium), or H (High)
+                                    quality grade
+                                </div>
+                            </div>
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path
+                                            d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Enter Temperatures</strong> — Air temp and process temp in Kelvin
+                                    (typically 295–305K and 305–315K)
+                                </div>
+                            </div>
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="3" />
+                                        <path
+                                            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Set Machine Parameters</strong> — Rotational speed (RPM), torque (Nm),
+                                    and tool wear (minutes)
+                                </div>
+                            </div>
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Click "Predict"</strong> — View the failure probability, confidence level,
+                                    and action recommendation instantly
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Method 2: Checkbox Selection -->
+                    <div class="howto-card">
+                        <div class="howto-number">2</div>
+                        <h3 class="howto-title">Test Data Checkbox</h3>
+                        <p class="howto-desc">Use real test data with a single click:</p>
+                        <div class="howto-steps">
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Scroll to Test Data Table</strong> — Browse 2,000 real sensor
+                                    readings from the holdout test set
+                                </div>
+                            </div>
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <polyline points="9 11 12 14 22 4" />
+                                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Check Any Row</strong> — Click the checkbox on the right side of any
+                                    row to auto-fill all input fields above with that row's sensor data
+                                </div>
+                            </div>
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <polygon
+                                            d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Filter by Status</strong> — Use the filter icon on the "Machine Failure"
+                                    column to show only Normal or Failure rows
+                                </div>
+                            </div>
+                            <div class="howto-step">
+                                <span class="step-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong>Compare Predictions</strong> — Check if the model's prediction matches
+                                    the actual failure label shown in the table
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Model Details Section ─── -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Under the Hood</span>
+                    <h2 class="section-title">Model &amp; Data Overview</h2>
+                    <p class="section-subtitle">Built on the AI4I 2020 Predictive Maintenance Dataset from UCI Machine
+                        Learning Repository.</p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <h4 class="detail-title">Dataset</h4>
+                        <ul class="detail-list">
+                            <li>10,000 industrial sensor records</li>
+                            <li>~3.4% failure rate (heavily imbalanced)</li>
+                            <li>Features: temperature, RPM, torque, tool wear, product type</li>
+                            <li>80/20 stratified train-test split</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h4 class="detail-title">Model Selection</h4>
+                        <ul class="detail-list">
+                            <li>Compared 7 classifiers (LR, KNN, DT, RF, AdaBoost, GBM, XGBoost)</li>
+                            <li>XGBoost selected for best recall-precision balance</li>
+                            <li><code>scale_pos_weight</code> for class imbalance</li>
+                            <li>RandomizedSearchCV (30 iter, 5-fold CV, F1 scoring)</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h4 class="detail-title">Action Levels</h4>
+                        <ul class="detail-list">
+                            <li><span class="action-dot action-normal"></span> <strong>Normal</strong> — &lt;20%
+                                failure probability</li>
+                            <li><span class="action-dot action-monitor"></span> <strong>Monitor</strong> — 20–39%
+                                failure probability</li>
+                            <li><span class="action-dot action-warning"></span> <strong>Warning</strong> — 40–69%
+                                failure probability</li>
+                            <li><span class="action-dot action-critical"></span> <strong>Critical</strong> — ≥70%
+                                failure probability</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h4 class="detail-title">Tech Stack</h4>
+                        <ul class="detail-list">
+                            <li><strong>Backend:</strong> FastAPI + Uvicorn</li>
+                            <li><strong>ML:</strong> XGBoost, scikit-learn, pandas</li>
+                            <li><strong>Frontend:</strong> Jinja2, vanilla JS, CSS</li>
+                            <li><strong>Deploy:</strong> Docker / Docker Compose</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── CTA Section ─── -->
+        <section class="section cta-section">
+            <div class="container">
+                <div class="cta-card">
+                    <div class="cta-glow"></div>
+                    <h2 class="cta-title">Ready to Predict?</h2>
+                    <p class="cta-desc">Explore the dashboard, test with real sensor data, or integrate via the REST
+                        API.</p>
+                    <div class="cta-actions">
+                        <a href="/app" class="btn btn-primary btn-lg">Open Dashboard</a>
+                        <a href="https://github.com/gitadminken/Machine-maintenance" target="_blank" rel="noopener"
+                            class="btn btn-outline btn-lg">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                            </svg>
+                            GitHub Repository
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Footer ─── -->
+        <footer class="landing-footer">
+            <div class="container">
+                <p>Machine Failure Prediction System · Developed by Kenneth John Gequilan| Powered by FastAPI &amp; XGBoost</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Fade-in on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.impact-card, .howto-card, .detail-card, .cta-card').forEach(el => {
+            el.classList.add('fade-up');
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
