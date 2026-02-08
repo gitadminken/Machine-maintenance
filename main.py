@@ -1,6 +1,6 @@
 import pickle
 import pandas as pd
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -88,7 +88,24 @@ TEST_DATA = _compute_test_data_raw()
 
 
 @app.get("/", response_class=HTMLResponse)
+async def landing(request: Request):
+    return templates.TemplateResponse("landing.html", {"request": request})
+
+
+@app.get("/app", response_class=HTMLResponse)
 async def home(request: Request):
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "prediction": None,
+        "confidence": None,
+        "metrics": MODEL_METRICS,
+        "test_data": TEST_DATA,
+        "selected_row_index": None
+    })
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(request: Request):
     return templates.TemplateResponse("index.html", {
         "request": request,
         "prediction": None,
@@ -121,28 +138,30 @@ def get_action(failure_probability: float):
 
 @app.post("/api/predict", response_class=JSONResponse)
 async def predict_api(input: PredictionInput):
-    input_df = prepare_input(
-        input.type, input.air_temp, input.process_temp,
-        input.rpm, input.torque, input.tool_wear
-    )
-    input_scaled = preprocessor.transform(input_df)
+    try:
+        input_df = prepare_input(
+            input.type, input.air_temp, input.process_temp,
+            input.rpm, input.torque, input.tool_wear
+        )
+        input_scaled = preprocessor.transform(input_df)
 
-    prediction = int(model.predict(input_scaled)[0])
-    proba = model.predict_proba(input_scaled)[0]
+        prediction = int(model.predict(input_scaled)[0])
+        proba = model.predict_proba(input_scaled)[0]
 
-    failure_probability = float(proba[1])
-    confidence = float(proba[1] if prediction == 1 else proba[0])
-    action, action_text, action_color = get_action(failure_probability)
+        failure_probability = float(proba[1])
+        confidence = float(proba[1] if prediction == 1 else proba[0])
+        action, action_text, action_color = get_action(failure_probability)
 
-    return {
-        "prediction": prediction,
-        "confidence": confidence,
-        "failure_probability": failure_probability,
-        "action": action,
-        "action_text": action_text,
-        "action_color": action_color
-    }
-
+        return {
+            "prediction": prediction,
+            "confidence": confidence,
+            "failure_probability": failure_probability,
+            "action": action,
+            "action_text": action_text,
+            "action_color": action_color
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Prediction error: {str(e)}")
 
 
 if __name__ == "__main__":
