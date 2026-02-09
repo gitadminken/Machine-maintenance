@@ -2,9 +2,22 @@
 
 FastAPI web app that predicts machine failures from sensor data. Uses an XGBoost model trained on the [AI4I 2020 Predictive Maintenance Dataset](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset) (10,000 records).
 
+## Live Demo
+
+You can try the app online:
+
+[Machine Failure Prediction Dashboard (Live on Render)](https://ml-for-machine-maintenance.onrender.com)
+
+- The landing page provides an overview and links to the dashboard.
+- The dashboard lets you enter sensor readings, view model diagnostics, and test predictions interactively.
+- The API endpoint is available at `/api/predict` for programmatic access.
+
+---
+
+
 ## Domain Context
 
-I am a Senior Technician at Samsung, where I work directly with production equipment and deal with unplanned downtime that impacts yield and operational cost. In semiconductor and electronics manufacturing, maintenance decisions depend on sensor telemetry — temperature differentials, spindle speeds, torque loads, and tooling wear — the same parameters this model consumes.
+I am a Senior Technician at Samsung, where I work directly with production equipment and deal with unplanned downtime that impacts yield and operational cost. In semiconductor and electronics manufacturing, maintenance decisions depend on sensor telemetry  — the same parameters this model consumes.
 
 The action-level system (Normal → Monitor → Warning → Critical) mirrors the triage process I follow on the production floor: not every anomaly warrants a line stop, but missed failures are costly. The model's threshold and metric choices were shaped by that firsthand operational experience.
 
@@ -49,6 +62,7 @@ Test set results (20% holdout, stratified):
 - 52 true positives, 22 false positives out of 2,000 samples
 
 Training notebook is in `notebook/training.ipynb`.
+
 
 ## Project structure
 
